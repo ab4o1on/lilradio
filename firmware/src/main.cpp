@@ -24,7 +24,8 @@ bool pendingSave = false;
 
 unsigned long nextGetRadioInfoTime = 0;
 
-int frequency = 10000;
+int frequency = 10440;
+bool isDisplayOff = false;
 int volume = 1;
 int signalStrength = 0;
 bool isMute = false;
@@ -45,6 +46,7 @@ void handleDownButton(lilka::ButtonState button);
 void handleSelectButton(lilka::ButtonState button);
 void handleAButton(lilka::ButtonState button);
 void handleDButton(lilka::ButtonState button);
+void handleStartButton(lilka::ButtonState button);
 void handleGetRadioInfo();
 void loadSettings();
 void saveSettings();
@@ -70,6 +72,7 @@ void loop()
   handleSelectButton(state.select);
   handleAButton(state.a);
   handleDButton(state.d);
+  handleStartButton(state.start);
 
   if (pendingSave && (millis() - lastSettingsChangeTime > SAVE_SETTINGS_DELAY))
   {
@@ -334,6 +337,16 @@ void handleDButton(lilka::ButtonState button)
 
     lastSettingsChangeTime = millis();
     pendingSave = true;
+  }
+}
+
+void handleStartButton(lilka::ButtonState button)
+{
+  if (button.justPressed)
+  {
+    isDisplayOff = !isDisplayOff;
+    if (isDisplayOff) lilka::board.enablePowerSavingMode();
+    else lilka::board.disablePowerSavingMode();
   }
 }
 
